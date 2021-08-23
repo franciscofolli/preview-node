@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('dotenv/config');
 
 const {
     DB_DATABASE,
@@ -15,3 +16,6 @@ mongoose.connect(`mongodb://${DB_HOSTNAME}:${DB_PORT}/${DB_DATABASE}`,{
     .then(db => console.log('DB is connected to', db.connection.host))
     .catch(err => console.error('Error - Could not connect to mongo database\n' + err));
 
+mongoose.Promise = global.Promise;
+
+module.exports = mongoose;

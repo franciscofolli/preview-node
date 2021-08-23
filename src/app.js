@@ -9,12 +9,13 @@ const {
   APP_PORT,
 } = process.env;
 
-app.use(bodyParser.json)
-app.use(bodyParser.urlencoded())
+app.use(bodyParser.json());
 
-app.get('/', function (req, res) {
-  res.send('INFRA-STRUCTURE WORKING - UPDATED');
-});
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
+require('./controllers/api/AuthController')(app);
 
 app.listen(APP_PORT, () => {
     console.log(`SERVER STARTED [ON]: ${APP_URL}:${APP_PORT}`);

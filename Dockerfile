@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:14.17.5
 
 LABEL maintainer "Francisco Folli <franciscoabel2001@gmail.com>"
 
@@ -6,7 +6,8 @@ WORKDIR /usr/src/app/
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install && \
+npm rebuild bcrypt
 
 COPY . .
 
