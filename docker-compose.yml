@@ -16,7 +16,6 @@ services:
             - db
         ports:
             - ${APP_PORT}:${APP_PORT}
-        command: npm run start
 
     db:
         image: mongo:latest
@@ -32,6 +31,8 @@ services:
             MONGO_INITDB_USERNAME: ${DB_USERNAME}
             MONGO_INITDB_PASSWORD: ${DB_PASSWORD}
             MONGO_INITDB_DATABASE: ${DB_DATABASE}
+        logging: 
+            driver: none
 
 volumes:
     dbdata-volume:

@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({
 require('./controllers/api/AuthController')(app);
 
 app.listen(APP_PORT, () => {
-    console.log(`SERVER STARTED [ON]: ${APP_URL}:${APP_PORT}`);
+    console.log(`SERVER STARTED [ON] [DEV1]: ${APP_URL}:${APP_PORT}`);
 });
 
 
