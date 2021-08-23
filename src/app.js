@@ -1,6 +1,7 @@
 require('dotenv/config');
 require('./infra/DBSource/MongoDatabase');
 const express = require('express');
+
 const app = express();
 const bodyParser = require('body-parser');
 
@@ -15,8 +16,8 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-require('./controllers/api/AuthController')(app);
-require('./controllers/api/ClientController')(app);
+require('./app/controllers/api/AuthController')(app);
+require('./app/controllers/api/ClientController')(app);
 
 app.listen(APP_PORT, () => {
     console.log(`SERVER STARTED [ON] [DEV1]: ${APP_URL}:${APP_PORT}`);

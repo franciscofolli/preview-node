@@ -1,10 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
-
-
 const User = require('../../persistence/schemas/UserSchema');
-const authConfig = require('../../config/auth.json');
+const authConfig = require('../../../config/auth.json');
+
 
 const router = express.Router();
 
