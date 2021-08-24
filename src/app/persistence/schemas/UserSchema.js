@@ -27,9 +27,13 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         select: false
     },
-    createdAt: {
+    persistDate: {
         type: Date,
         default: Date.now
+    },
+    userAudit: {
+        type: String,
+        required: true
     }
 });
 
