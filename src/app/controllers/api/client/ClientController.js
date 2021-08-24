@@ -9,17 +9,29 @@ router.use(authMiddleware);
 
 router.get('/', async (req,res) => {
     try {
+        const clients = await ClientSchema.find();
 
-        res.send({ ok: true, user: req.userId })
+        res.send({ clients, user: req.userId })
     } catch (err) {
-        return res.status(400).send({ error: 'Client List failed!', errorLog: { err } })
+        return res.status(400).send({ error: 'Error - Could not load Clients!', errorLog: { err } })
     }
     
 })
 
 router.get('/:clientEmail', async (req,res) => {
+    const email = req.params.clientEmail;
     try {
-        res.send({ ok: true, user: req.userId })
+        if (email) {
+            const client = await ClientSchema.findOne({ email })
+            if(!client){
+                res.status(404).send({ error: 'Error - Client not found', user: req.userId })      
+            } else {
+                res.send({ client, user: req.userId })
+            }
+        } else {
+            res.status(400).send({ error: 'Error - Get parameter is empty', user: req.userId })
+        }
+        
     } catch (err) {
         return res.status(400).send({ error: 'Client List failed!', errorLog: { err } })
     }
