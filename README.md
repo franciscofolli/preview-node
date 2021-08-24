@@ -6,6 +6,10 @@ This terminal code doesn't logs in real-time use like the method below:
 
     docker-compose build && docker-compose up -d
 
+    or
+
+    docker-compose up --build
+
 # Run method -- dev mode with 'hot-reload' 
 This terminal code update all the times that code have new changes:
 
