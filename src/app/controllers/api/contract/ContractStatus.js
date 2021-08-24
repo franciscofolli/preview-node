@@ -1,5 +1,5 @@
 const express = require('express');
-const authMiddleware = require('../../middlewares/auth');
+const authMiddleware = require('../../../middlewares/auth');
 
 const router = express.Router();
 
@@ -9,4 +9,4 @@ router.get('/', (req,res) => {
     res.send({ ok: true, user: req.userId })
 })
 
-module.exports = app => app.use('/clients', router);
+module.exports = app => app.use('/contract/status', router);
