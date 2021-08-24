@@ -4,6 +4,7 @@ const mongoose = require('../../../../infra/DBSource/MongoDatabase');
 const ContractStatusSchema = new mongoose.Schema({
     description: {
         type: String,
+        unique: true,
         required: true
     },
     isActive: {
