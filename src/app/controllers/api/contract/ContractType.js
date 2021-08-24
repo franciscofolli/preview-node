@@ -1,5 +1,6 @@
 const express = require('express');
 const authMiddleware = require('../../../middlewares/auth');
+const ContractTypeSchema = require('../../../persistence/schemas/contract/ContractTypeSchema');
 
 const router = express.Router();
 
@@ -7,31 +8,29 @@ router.use(authMiddleware);
 
 router.get('/', async (req,res) => {
     try {
-        const clients = await ClientSchema.find();
+        const contractTypes = await ContractTypeSchema.find();
 
-        res.send({ clients, user: req.userId })
+        res.send({ contractTypes, user: req.userId })
     } catch (err) {
-        return res.status(400).send({ error: 'Error - Could not load Clients!', errorLog: { err } })
+        return res.status(400).send({ error: 'Error - Could not load Contract Types!', errorLog: { err } })
     }
     
 })
 
 router.post('/', async (req,res) => {
-    const { name, email } = req.body;
-    const userAudit = req.userId
+    const { contractType, description } = req.body;
     const now = new Date();
     try {
 
-        const client = await ClientSchema.create({
-            name,
-            email,  
+        const type = await ContractTypeSchema.create({
+            ...req.body,
             persistDate: now,
-            userAudit
+            userAudit: req.userId
         });
 
-        client.userAudit = undefined;
+        type.userAudit = undefined;
 
-        return res.send({ client: client, user: req.userId })
+        return res.send({ contractType: type, user: req.userId })
     } catch (err) {
         console.error(err);
         return res.status(400).send({ error: 'Error - Could not create new client!', errorLog: { err } })
@@ -39,44 +38,43 @@ router.post('/', async (req,res) => {
 })
 
 router.put('/:typeId', async (req,res) => {
-    const clientId = req.params.clientId;
+    const typeId = req.params.typeId;
     const now = new Date();
     try {
-        if(!clientId) {
-            return res.status(400).send({ error: 'Error - Please pass the clientId on pathVariable!', errorLog: { err } })
+        if(!typeId) {
+            return res.status(400).send({error: 'Error - Please pass the typeId on pathVariable!'})
         }
 
-        const client = await ClientSchema.findById(clientId);
+        const contractType = await ContractTypeSchema.findById(typeId);
 
-        if(!client) {
-            return res.status(404).send({ error: 'Error - Client not found!', errorLog: { err } })
+        if(!contractType) {
+            return res.status(404).send({ error: 'Error - Contract Type not found!'})
         }
 
-        await client.updateOne({
+        await contractType.updateOne({
             ...req.body, userAudit : req.userId, persistDate: now
         });
 
-        client.userAudit = undefined;
-
-        return res.send({ sucess: 'Sucess - Client info changed sucessfully', user: req.userId })
+        return res.send({ sucess: 'Sucess - Contract Type info changed sucessfully', user: req.userId })
     } catch (err) {
-        return res.status(400).send({ error: 'Client List failed!', errorLog: { err } })
+        console.error(err);
+        return res.status(400).send({ error: 'Contract Type change failed!'});
     }
 })
 
 router.delete('/:typeId', async (req,res) => {
-    const clientId = req.params.clientId;
+    const typeId = req.params.typeId;
     try {
-        if (clientId) {
-            await ClientSchema.findByIdAndRemove(clientId);
-            res.send({ error: 'Success - Client removed successfully', user: req.userId })      
+        if (typeId) {
+            await ContractTypeSchema.findByIdAndRemove(typeId);
+            res.send({ error: 'Success - Contract Type removed successfully', user: req.userId })      
         } else {
             res.status(400).send({ error: 'Error - Get parameter is empty', user: req.userId })
         }
         
     } catch (err) {
         console.error(err);
-        return res.status(400).send({ error: 'Client remove failed!' })
+        return res.status(400).send({ error: 'Contract Type remove failed!' })
     }
 })
 

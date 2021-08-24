@@ -81,7 +81,7 @@ router.put('/:clientId', async (req,res) => {
 
         return res.send({ sucess: 'Sucess - Client info changed sucessfully', user: req.userId })
     } catch (err) {
-        return res.status(400).send({ error: 'Client List failed!', errorLog: { err } })
+        return res.status(400).send({ error: 'Client info change failed!', errorLog: { err } })
     }
 })
 
