@@ -1,5 +1,6 @@
 const jsonwebtoken = require('jsonwebtoken')
-const auth = require('../../config/auth.json')
+const auth = require('../../resources/auth.json')
+
 
 
 

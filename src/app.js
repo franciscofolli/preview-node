@@ -16,8 +16,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-require('./app/controllers/api/AuthController')(app);
-require('./app/controllers/api/ClientController')(app);
+require('./app/controllers/index')(app);
 
 app.listen(APP_PORT, () => {
     console.log(`SERVER STARTED [ON] [DEV1]: ${APP_URL}:${APP_PORT}`);
