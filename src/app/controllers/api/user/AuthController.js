@@ -1,13 +1,10 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
-const User = require('../../persistence/schemas/UserSchema');
-const authConfig = require('../../../resources/auth.json');
+const User = require('../../../persistence/schemas/UserSchema');
+const authConfig = require('../../../../resources/auth.json');
 const crypto = require('crypto');
-const nodeMailer = require('../../../infra/EmailSource/NodeMailer');
-
-
-
+const nodeMailer = require('../../../../infra/EmailSource/NodeMailer');
 
 
 const router = express.Router();
@@ -19,12 +16,21 @@ function generateToken(params = {}){
 }
 
 router.post('/register', async (req,res) => {
-    const { email } = req.body;
+    const { name, email, password } = req.body;
+    const now = new Date();
+    const userAudit = 'Registered by User Service';
     try {
         if(await User.findOne({ email })){
             return res.status(400).send({ error: 'User already exists' })
         }
-        const user = await User.create(req.body);
+
+        const user = await User.create({
+            name,
+            email,
+            password,    
+            persistDate: now,
+            userAudit
+        });
 
         user.password = undefined;
 
