@@ -1,6 +1,8 @@
 const express = require('express');
 const authMiddleware = require('../../../middlewares/auth');
 const ClientSchema = require('../../../persistence/schemas/client/ClientSchema');
+const TelephoneSchema = require('../../../persistence/schemas/client/TelephoneSchema');
+
 
 
 const router = express.Router();
@@ -9,7 +11,7 @@ router.use(authMiddleware);
 
 router.get('/', async (req,res) => {
     try {
-        const clients = await ClientSchema.find();
+        const clients = await ClientSchema.find().populate('telephones');
 
         res.send({ clients, user: req.userId })
     } catch (err) {
@@ -22,7 +24,7 @@ router.get('/:clientEmail', async (req,res) => {
     const email = req.params.clientEmail;
     try {
         if (email) {
-            const client = await ClientSchema.findOne({ email })
+            const client = await ClientSchema.findOne({ email }).populate('telephones');
             if(!client){
                 res.status(404).send({ error: 'Error - Client not found', user: req.userId })      
             } else {
@@ -33,13 +35,12 @@ router.get('/:clientEmail', async (req,res) => {
         }
         
     } catch (err) {
-        return res.status(400).send({ error: 'Client List failed!', errorLog: { err } })
+        return res.status(400).send({ error: 'Client search failed!'})
     }
 })
 
 router.post('/', async (req,res) => {
-    const { name, email } = req.body;
-    const userAudit = req.userId
+    const { name, email, telephones } = req.body;
     const now = new Date();
     try {
 
@@ -47,12 +48,20 @@ router.post('/', async (req,res) => {
             name,
             email,  
             persistDate: now,
-            userAudit
+            userAudit: req.userId
         });
+
+        await Promise.all(telephones.map(async tel => {
+            const telephoneSchema = new TelephoneSchema({ ...tel, client: client._id });
+            await telephoneSchema.save()
+            client.telephones.push(telephoneSchema)
+        }));
+
+        await client.save();
 
         client.userAudit = undefined;
 
-        return res.send({ client: client, user: req.userId })
+        return res.send({ client: client.populate('Telephone'), user: req.userId })
     } catch (err) {
         console.error(err);
         return res.status(400).send({ error: 'Error - Could not create new client!', errorLog: { err } })

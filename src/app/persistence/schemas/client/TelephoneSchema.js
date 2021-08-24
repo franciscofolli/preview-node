@@ -13,14 +13,6 @@ const TelephoneSchema = new mongoose.Schema({
     number: {
         type: String,
         required: true,
-    },
-    persistDate: {
-        type: Date,
-        default: Date.now
-    },
-    userAudit: {
-        type: String,
-        required: true
     }
 });
 
