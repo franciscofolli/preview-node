@@ -60,19 +60,44 @@ router.post('/', async (req,res) => {
 })
 
 router.put('/:clientId', async (req,res) => {
+    const clientId = req.params.clientId;
+    const now = new Date();
     try {
+        if(!clientId) {
+            return res.status(400).send({ error: 'Error - Please pass the clientId on pathVariable!', errorLog: { err } })
+        }
 
-        res.send({ ok: true, user: req.userId })
+        const client = await ClientSchema.findById(clientId);
+
+        if(!client) {
+            return res.status(404).send({ error: 'Error - Client not found!', errorLog: { err } })
+        }
+
+        await client.updateOne({
+            ...req.body, userAudit : req.userId, persistDate: now
+        });
+
+        client.userAudit = undefined;
+
+        return res.send({ sucess: 'Sucess - Client info changed sucessfully', user: req.userId })
     } catch (err) {
         return res.status(400).send({ error: 'Client List failed!', errorLog: { err } })
     }
 })
 
-router.delete('/:clientId', (req,res) => {
+router.delete('/:clientId', async (req,res) => {
+    const clientId = req.params.clientId;
     try {
-        res.send({ ok: true, user: req.userId })
+        if (clientId) {
+            await ClientSchema.findByIdAndRemove(clientId);
+            res.send({ error: 'Success - Client removed successfully', user: req.userId })      
+        } else {
+            res.status(400).send({ error: 'Error - Get parameter is empty', user: req.userId })
+        }
+        
     } catch (err) {
-        return res.status(400).send({ error: 'Client List failed!', errorLog: { err } })
+        console.error(err);
+        return res.status(400).send({ error: 'Client remove failed!' })
     }
 })
 
