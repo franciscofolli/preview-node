@@ -1,9 +1,13 @@
 require('dotenv/config');
 require('./infra/DBSource/MongoDatabase');
+var cors = require('cors')
 const express = require('express');
 
 const app = express();
 const bodyParser = require('body-parser');
+
+
+app.use(cors());
 
 const {
   APP_URL,
